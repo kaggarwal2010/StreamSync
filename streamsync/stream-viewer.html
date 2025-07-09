@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamSync - Stream Viewer</title>
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/stream-viewer.css">
+</head>
+<body class="stream-page">
+    <header>
+        <nav class="main-nav">
+            <div class="logo">StreamSync</div>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="#">Browse</a></li>
+                <li><a href="#">Communities</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button id="login-btn">Login</button>
+                <button id="signup-btn" class="primary-btn">Sign Up</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="stream-container">
+        <div class="stream-layout">
+            <div class="video-section">
+                <div class="video-container">
+                    <div class="video-placeholder">
+                        <div class="stream-offline">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 9.5L12 14.5L7 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <p>Stream is currently offline</p>
+                            <button class="primary-btn" id="start-stream-btn">Start Streaming</button>
+                        </div>
+                    </div>
+                    <div class="video-controls">
+                        <div class="stream-info">
+                            <h1 class="stream-title">GameMaster42's Amazing Stream</h1>
+                            <div class="streamer-info">
+                                <div class="streamer-avatar"></div>
+                                <div class="streamer-details">
+                                    <h3 class="streamer-name">GameMaster42</h3>
+                                    <p class="stream-category">Just Chatting</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stream-stats">
+                            <div class="stat">
+                                <span class="stat-icon viewers-icon"></span>
+                                <span class="stat-value" id="viewer-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-section">
+                <div class="chat-header">
+                    <h3>Stream Chat</h3>
+                    <div class="chat-options">
+                        <button class="icon-btn" id="chat-settings">⚙️</button>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-welcome">
+                        <p>Welcome to the chat! Remember to follow our community guidelines.</p>
+                    </div>
+                    
+                    <div class="system-message">
+                        <span>GameMaster42 started streaming 2 hours ago</span>
+                    </div>
+                </div>
+                
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Send a message...">
+                    <button id="send-chat-btn" class="primary-btn">Chat</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stream-details">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="about">About</button>
+                <button class="tab-btn" data-tab="videos">Videos</button>
+                <button class="tab-btn" data-tab="schedule">Schedule</button>
+            </div>
+            
+            <div class="tab-content" id="about-tab">
+                <div class="about-stream">
+                    <h3>About the Stream</h3>
+                    <p>Welcome to my stream! I play various games and interact with my awesome community. Don't forget to follow for notifications when I go live!</p>
+                    
+                    <div class="streamer-stats">
+                        <div class="stat-block">
+                            <span class="stat-number">12.5K</span>
+                            <span class="stat-label">Followers</span>
+                        </div>
+                        <div class="stat-block">
+                            <span class="stat-number">142</span>
+                            <span class="stat-label">Videos</span>
+                        </div>
+                        <div class="stat-block">
+                            <span class="stat-number">March 2023</span>
+                            <span class="stat-label">Joined</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content hidden" id="videos-tab">
+                <h3>Past Broadcasts</h3>
+                <div class="video-grid">
+                    <div class="video-card placeholder"></div>
+                    <div class="video-card placeholder"></div>
+                    <div class="video-card placeholder"></div>
+                </div>
+            </div>
+            
+            <div class="tab-content hidden" id="schedule-tab">
+                <h3>Upcoming Streams</h3>
+                <div class="schedule-list">
+                    <div class="schedule-item">
+                        <div class="schedule-date">
+                            <span class="day">Mon</span>
+                            <span class="time">8:00 PM</span>
+                        </div>
+                        <div class="schedule-info">
+                            <h4>Minecraft Mondays</h4>
+                            <p>Building a new world with viewers!</p>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <div class="schedule-date">
+                            <span class="day">Wed</span>
+                            <span class="time">7:00 PM</span>
+                        </div>
+                        <div class="schedule-info">
+                            <h4>Coding with Friends</h4>
+                            <p>Working on web development projects</p>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <div class="schedule-date">
+                            <span class="day">Fri</span>
+                            <span class="time">9:00 PM</span>
+                        </div>
+                        <div class="schedule-info">
+                            <h4>Friday Night Gaming</h4>
+                            <p>Playing the latest releases</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 StreamSync. All rights reserved.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/stream.js"></script>
+    <script src="../js/chat.js"></script>
+    <script src="../js/stream-viewer.js"></script>
+</body>
+</html>
