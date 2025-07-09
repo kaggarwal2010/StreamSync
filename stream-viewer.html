@@ -169,5 +169,56 @@
     <script src="../js/stream.js"></script>
     <script src="../js/chat.js"></script>
     <script src="../js/stream-viewer.js"></script>
+<!-- Authentication Modal -->
+<div id="auth-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        
+        <div class="auth-container">
+            <!-- Login Form -->
+            <div id="login-form" class="auth-form active">
+                <h2>Login to StreamSync</h2>
+                <form id="login-submit">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="primary-btn">Login</button>
+                </form>
+                <p class="switch-form">Don't have an account? <a href="#" id="switch-to-signup">Sign Up</a></p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signup-form" class="auth-form">
+                <h2>Create StreamSync Account</h2>
+                <form id="signup-submit">
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" required>
+                    </div>
+                    <button type="submit" class="primary-btn">Sign Up</button>
+                </form>
+                <p class="switch-form">Already have an account? <a href="#" id="switch-to-login">Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/auth-modal.js"></script>
 </body>
 </html>
