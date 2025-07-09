@@ -10,10 +10,21 @@ const auth0Config = {
 // Create Auth0 instance
 const webAuth = new auth0.WebAuth(auth0Config);
 
-// Login Function
+// Login Function with debugging
 function login() {
-    webAuth.authorize();
+    console.log('Login initiated');
+    try {
+        webAuth.authorize({
+            redirectUri: auth0Config.redirectUri,
+            responseType: auth0Config.responseType,
+            scope: auth0Config.scope
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed: ' + error.message);
+    }
 }
+
 
 // Logout Function
 function logout() {

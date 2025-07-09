@@ -2,37 +2,28 @@
 <html>
 <head>
     <title>Authenticating...</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.auth0.com/js/auth0/9.19.0/auth0.min.js"></script>
-    <script src="js/auth0-config.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
-        }
-        p {
-            font-size: 18px;
-            color: #333;
-        }
-    </style>
+    <script src="assets/js/auth0-config.js"></script>
     <script>
         window.addEventListener('load', function() {
+            alert('Callback page loaded');
+            
             const webAuth = new auth0.WebAuth(auth0Config);
             webAuth.parseHash((err, authResult) => {
+                if (err) {
+                    alert('Authentication error: ' + JSON.stringify(err));
+                    window.location.href = '/';
+                    return;
+                }
+                
                 if (authResult && authResult.accessToken && authResult.idToken) {
+                    alert('Authentication successful');
                     localStorage.setItem('access_token', authResult.accessToken);
                     localStorage.setItem('id_token', authResult.idToken);
+                    
                     window.location.href = '/';
-                } else if (err) {
-                    console.error('Authentication error', err);
-                    // Optional: Add more detailed error handling
-                    alert('Authentication failed. Please try again.');
+                } else {
+                    alert('No authentication result');
                     window.location.href = '/';
                 }
             });
