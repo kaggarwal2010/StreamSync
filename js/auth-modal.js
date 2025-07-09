@@ -100,8 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Basic validation
             if (email && password) {
-                // Simulate login (replace with actual authentication later)
-                alert('Login functionality will be implemented soon!');
                 closeModal();
             } else {
                 alert('Please fill in all fields');
@@ -126,8 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // Simulate signup (replace with actual authentication later)
-                alert('Signup functionality will be implemented soon!');
                 closeModal();
             } else {
                 alert('Please fill in all fields');
