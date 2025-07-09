@@ -1,7 +1,7 @@
 // Auth0 Configuration
 const auth0Config = {
-    domain: 'YOUR_DOMAIN.auth0.com',
-    clientId: 'YOUR_CLIENT_ID',
+    domain: 'dev-31hih03hq03uoga3.us.auth0.com',
+    clientId: 'JsrkKvGCNleBn5K084OrUcZLaDEsAGEX',
     redirectUri: window.location.origin + '/callback.html',
     responseType: 'token id_token',
     scope: 'openid profile email'
@@ -20,7 +20,7 @@ function logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
-    
+
     webAuth.logout({
         returnTo: window.location.origin,
         clientId: auth0Config.clientId
@@ -34,11 +34,13 @@ function handleAuthentication() {
             // Set tokens in localStorage
             localStorage.setItem('access_token', authResult.accessToken);
             localStorage.setItem('id_token', authResult.idToken);
-            
+
             // Redirect to home page
             window.location.href = '/';
         } else if (err) {
             console.error('Authentication error', err);
+            // Redirect to home page even if there's an error
+            window.location.href = '/';
         }
     });
 }
@@ -55,9 +57,13 @@ function getProfile() {
     if (token) {
         webAuth.client.userInfo(token, (err, profile) => {
             if (profile) {
-                // Update UI with user info
-                document.getElementById('user-status').textContent = 
-                    `Welcome, ${profile.name || profile.email}`;
+                // Safely update user status
+                const userStatus = document.getElementById('user-status');
+                if (userStatus) {
+                    userStatus.textContent = 
+                        `Welcome, ${profile.name || profile.email}`;
+                    userStatus.style.display = 'block';
+                }
             }
         });
     }
@@ -71,23 +77,28 @@ function updateAuthUI() {
     const userStatus = document.getElementById('user-status');
 
     if (isAuthenticated()) {
-        loginButtons.style.display = 'none';
-        signupButtons.style.display = 'none';
-        logoutButton.style.display = 'inline-block';
+        // Safely update login/signup/logout buttons
+        if (loginButtons) loginButtons.style.display = 'none';
+        if (signupButtons) signupButtons.style.display = 'none';
+        if (logoutButton) logoutButton.style.display = 'inline-block';
+        
         getProfile();
-        userStatus.style.display = 'block';
+        
+        if (userStatus) userStatus.style.display = 'block';
     } else {
-        loginButtons.style.display = 'inline-block';
-        signupButtons.style.display = 'inline-block';
-        logoutButton.style.display = 'none';
-        userStatus.style.display = 'none';
+        // Safely update login/signup/logout buttons
+        if (loginButtons) loginButtons.style.display = 'inline-block';
+        if (signupButtons) signupButtons.style.display = 'inline-block';
+        if (logoutButton) logoutButton.style.display = 'none';
+        
+        if (userStatus) userStatus.style.display = 'none';
     }
 }
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     // Check for callback
-    if (window.location.pathname === '/callback.html') {
+    if (window.location.pathname.includes('callback.html')) {
         handleAuthentication();
     }
 
