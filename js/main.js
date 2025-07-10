@@ -1,45 +1,12 @@
+Here's the main.js without the debug panel:
+
 // StreamSync Main JavaScript
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Create a debug overlay
-    const debugOverlay = document.createElement('div');
-    debugOverlay.id = 'debug-overlay';
-    debugOverlay.style.position = 'fixed';
-    debugOverlay.style.top = '10px';
-    debugOverlay.style.right = '10px';
-    debugOverlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
-    debugOverlay.style.color = 'white';
-    debugOverlay.style.padding = '10px';
-    debugOverlay.style.zIndex = '9999';
-    debugOverlay.style.maxWidth = '300px';
-    debugOverlay.style.wordWrap = 'break-word';
+    console.log('StreamSync initialized');
 
-    function log(message) {
-        if (debugOverlay.textContent) {
-            debugOverlay.textContent += '\n' + message;
-        } else {
-            debugOverlay.textContent = message;
-        }
-        document.body.appendChild(debugOverlay);
-    }
-
-    try {
-        log('StreamSync initialized');
-
-        // Initialize UI components
-        initializeUI();
-
-        // Additional checks
-        const loginBtn = document.getElementById('login-btn');
-        const signupBtn = document.getElementById('signup-btn');
-        const authModal = document.getElementById('auth-modal');
-
-        log(`Login Button: ${!!loginBtn}`);
-        log(`Signup Button: ${!!signupBtn}`);
-        log(`Auth Modal: ${!!authModal}`);
-    } catch (error) {
-        log(`Initialization Error: ${error.message}`);
-    }
+    // Initialize UI components
+    initializeUI();
 });
 
 function initializeUI() {
