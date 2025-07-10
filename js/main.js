@@ -8,9 +8,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeUI() {
-    // Remove the placeholder alerts for login and signup
-    // The authentication is now handled by auth.js
-    
+    // Remove event listeners that were showing placeholder alerts
+    const loginBtn = document.getElementById('login-btn');
+    const signupBtn = document.getElementById('signup-btn');
+
+    // These event listeners are now handled in auth.js, so we'll remove any placeholder functionality
+    if (loginBtn) {
+        // Remove any existing click event listeners
+        const newLoginBtn = loginBtn.cloneNode(true);
+        loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
+    }
+
+    if (signupBtn) {
+        // Remove any existing click event listeners
+        const newSignupBtn = signupBtn.cloneNode(true);
+        signupBtn.parentNode.replaceChild(newSignupBtn, signupBtn);
+    }
+
     // Simulate loading featured streams (would normally fetch from an API)
     setTimeout(() => {
         loadFeaturedStreams();
@@ -64,7 +78,6 @@ function loadFeaturedStreams() {
 
         streamCard.addEventListener('click', () => {
             console.log(`Stream clicked: ${stream.title}`);
-            // Optional: Add navigation to stream page
             window.location.href = 'stream-viewer.html';
         });
 
