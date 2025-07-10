@@ -54,9 +54,45 @@ const API = {
   }
 };
 
+// Validate email format
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// Validate password strength
+function validatePassword(password) {
+  const errors = [];
+  
+  if (password.length < 8) {
+    errors.push("Password must be at least 8 characters long");
+  }
+  
+  if (!/[A-Z]/.test(password)) {
+    errors.push("Password must contain at least one uppercase letter");
+  }
+  
+  if (!/[a-z]/.test(password)) {
+    errors.push("Password must contain at least one lowercase letter");
+  }
+  
+  if (!/\d/.test(password)) {
+    errors.push("Password must contain at least one number");
+  }
+  
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    errors.push("Password must contain at least one special character");
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors: errors
+  };
+}
+
 // Setup authentication modal
 function setupAuthModal() {
-  console.log('Setting up auth modal'); // Debug log
+  console.log('Setting up auth modal');
   
   const modal = document.getElementById('auth-modal');
   const loginBtn = document.getElementById('login-btn');
@@ -77,7 +113,7 @@ function setupAuthModal() {
 
   // Open modal with login form
   function openLoginModal(e) {
-    console.log('Login button clicked'); // Debug log
+    console.log('Login button clicked');
     if (e) e.preventDefault();
     if (modal) modal.style.display = 'block';
     if (loginForm) loginForm.classList.add('active');
@@ -86,7 +122,7 @@ function setupAuthModal() {
 
   // Open modal with signup form
   function openSignupModal(e) {
-    console.log('Signup button clicked'); // Debug log
+    console.log('Signup button clicked');
     if (e) e.preventDefault();
     if (modal) modal.style.display = 'block';
     if (signupForm) signupForm.classList.add('active');
@@ -176,6 +212,13 @@ function setupAuthModal() {
       return;
     }
 
+    // Validate password strength
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      alert(passwordValidation.errors[0]);
+      return;
+    }
+
     try {
       const user = await API.registerUser({ username, email, password });
       alert(`Signup successful! Welcome, ${user.username}`);
@@ -185,14 +228,98 @@ function setupAuthModal() {
     }
   });
 
-  // Close modal when clicking outside
-  if (modal) {
-    modal.addEventListener('click', function(e) {
-      if (e.target === modal) {
-        closeModal();
-      }
+  // Setup social login buttons
+  const socialButtons = document.querySelectorAll('.social-btn');
+  socialButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const provider = button.classList.contains('google-btn') ? 'Google' : 'Discord';
+      const isSignup = button.closest('#signup-form') !== null;
+      handleSocialLogin(provider, isSignup);
     });
+  });
+}
+
+// Handle social login
+function handleSocialLogin(provider, isSignup = false) {
+  console.log(`Initiating ${provider} ${isSignup ? 'signup' : 'login'}`);
+  
+  // Simulate successful social login after delay
+  setTimeout(() => {
+    const user = {
+      id: 'social_' + Date.now(),
+      username: `${provider}User${Math.floor(Math.random() * 1000)}`,
+      email: `user${Math.floor(Math.random() * 1000)}@${provider.toLowerCase()}.example.com`,
+      avatar: `https://placehold.co/100/6441a5/ffffff?text=${provider.charAt(0)}`,
+      provider: provider
+    };
+    
+    // Set current user
+    currentUser = user;
+    
+    // Store session
+    const sessionToken = btoa(user.id + ':' + Date.now());
+    localStorage.setItem('streamSyncSession', sessionToken);
+    localStorage.setItem('streamSyncUser', JSON.stringify(user));
+    
+    // Update UI
+    updateAuthUI();
+    
+    // Close modal
+    const modal = document.getElementById('auth-modal');
+    if (modal) modal.style.display = 'none';
+    
+    console.log(`${provider} ${isSignup ? 'signup' : 'login'} successful:`, user);
+  }, 1500);
+}
+
+// Update UI based on authentication state
+function updateAuthUI() {
+  const loginBtn = document.getElementById('login-btn');
+  const signupBtn = document.getElementById('signup-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const userStatus = document.getElementById('user-status');
+
+  if (currentUser) {
+    // User is logged in
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (signupBtn) signupBtn.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
+    if (userStatus) {
+      userStatus.textContent = `Welcome, ${currentUser.username}`;
+      userStatus.style.display = 'block';
+    }
+  } else {
+    // User is logged out
+    if (loginBtn) loginBtn.style.display = 'inline-block';
+    if (signupBtn) signupBtn.style.display = 'inline-block';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    if (userStatus) userStatus.style.display = 'none';
   }
+}
+
+// Check for existing session on page load
+function checkSession() {
+  const savedUser = localStorage.getItem('streamSyncUser');
+  if (savedUser) {
+    try {
+      currentUser = JSON.parse(savedUser);
+      console.log('User session restored:', currentUser.username);
+      updateAuthUI();
+      return currentUser;
+    } catch (e) {
+      console.error('Failed to parse saved user:', e);
+      localStorage.removeItem('streamSyncUser');
+    }
+  }
+  return null;
+}
+
+// Logout function
+function logout() {
+  currentUser = null;
+  localStorage.removeItem('streamSyncSession');
+  localStorage.removeItem('streamSyncUser');
+  updateAuthUI();
 }
 
 // Initialize database if empty
@@ -208,5 +335,22 @@ initializeDatabase();
 // Ensure DOM is fully loaded before setting up modal
 document.addEventListener('DOMContentLoaded', function() {
   console.log('DOM fully loaded');
+  checkSession();
+  updateAuthUI();
   setupAuthModal();
+
+  // Add logout button event listener
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', logout);
+  }
 });
+
+// Export auth functions for potential external use
+window.StreamSyncAuth = {
+  login: API.validateUser,
+  signup: API.registerUser,
+  logout,
+  isLoggedIn: () => currentUser !== null,
+  getCurrentUser: () => currentUser
+};

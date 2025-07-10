@@ -467,3 +467,71 @@ footer {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+.social-login {
+    margin-top: 20px;
+}
+
+.divider {
+    text-align: center;
+    position: relative;
+    margin: 20px 0;
+    color: var(--text-muted);
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.divider span {
+    display: inline-block;
+    padding: 0 10px;
+    background-color: var(--medium-bg);
+    position: relative;
+    z-index: 1;
+    font-size: 12px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: var(--dark-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.social-btn svg {
+    margin-right: 10px;
+}
+
+.social-btn:hover {
+    background-color: var(--light-bg);
+}
+
+.google-btn {
+    color: white;
+}
+
+.discord-btn {
+    color: white;
+}
