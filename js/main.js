@@ -8,24 +8,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeUI() {
-    // Remove event listeners that were showing placeholder alerts
+    // Remove any existing event listeners that might have alerts
     const loginBtn = document.getElementById('login-btn');
     const signupBtn = document.getElementById('signup-btn');
 
-    // These event listeners are now handled in auth.js, so we'll remove any placeholder functionality
+    // If buttons exist, ensure they don't have any alert-triggering listeners
     if (loginBtn) {
-        // Remove any existing click event listeners
+        // Remove all existing event listeners
         const newLoginBtn = loginBtn.cloneNode(true);
         loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
     }
 
     if (signupBtn) {
-        // Remove any existing click event listeners
+        // Remove all existing event listeners
         const newSignupBtn = signupBtn.cloneNode(true);
         signupBtn.parentNode.replaceChild(newSignupBtn, signupBtn);
     }
 
-    // Simulate loading featured streams (would normally fetch from an API)
+    // Load featured streams
     setTimeout(() => {
         loadFeaturedStreams();
     }, 1500);
