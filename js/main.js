@@ -1,5 +1,3 @@
-Here's the main.js without the debug panel:
-
 // StreamSync Main JavaScript
 
 document.addEventListener('DOMContentLoaded', () => {
