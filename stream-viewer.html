@@ -37,26 +37,16 @@
                                 <path d="M17 9.5L12 14.5L7 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                             <p>Stream is currently offline</p>
-                            <button class="primary-btn" id="start-stream-btn">Start Streaming</button>
-                        </div>
-                    </div>
-                    <div class="video-controls">
-                        <div class="stream-info">
-                            <h1 class="stream-title">GameMaster42's Amazing Stream</h1>
-                            <div class="streamer-info">
-                                <div class="streamer-avatar"></div>
-                                <div class="streamer-details">
-                                    <h3 class="streamer-name">GameMaster42</h3>
-                                    <p class="stream-category">Just Chatting</p>
-                                </div>
+                            
+                            <!-- Add these streaming control buttons -->
+                            <div id="streamControls">
+                                <button id="startStreamBtn" class="primary-btn">Start Streaming</button>
+                                <button id="stopStreamBtn" class="primary-btn" style="display:none;">Stop Streaming</button>
                             </div>
                         </div>
-                        <div class="stream-stats">
-                            <div class="stat">
-                                <span class="stat-icon viewers-icon"></span>
-                                <span class="stat-value" id="viewer-count">0</span>
-                            </div>
-                        </div>
+                        
+                        <!-- Add video element for streaming -->
+                        <video id="streamPlayer" controls style="display:none; max-width: 100%; background: black;"></video>
                     </div>
                 </div>
             </div>
@@ -223,5 +213,6 @@
     <script src="js/stream.js"></script>
     <script src="js/chat.js"></script>
     <script src="js/stream-viewer.js"></script>
+    <script src="js/streaming.js"></script>
 </body>
 </html>
