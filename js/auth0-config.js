@@ -7,13 +7,34 @@ const auth0Config = {
     scope: 'openid profile email'
 };
 
-// Create Auth0 instance
-const webAuth = new auth0.WebAuth(auth0Config);
+// Create Auth0 instance - make sure this is defined globally
+let webAuth;
+
+// Initialize Auth0 when the script loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing Auth0 WebAuth instance');
+    try {
+        // Check if auth0 is available
+        if (typeof auth0 !== 'undefined') {
+            webAuth = new auth0.WebAuth(auth0Config);
+            console.log('Auth0 WebAuth initialized successfully');
+        } else {
+            console.error('Auth0 library not loaded');
+            alert('Authentication service not available. Please try again later.');
+        }
+    } catch (error) {
+        console.error('Error initializing Auth0:', error);
+        alert('Error initializing authentication: ' + error.message);
+    }
+});
 
 // Login Function with debugging
 function login() {
     console.log('Login initiated');
     try {
+        if (!webAuth) {
+            throw new Error('Authentication not initialized');
+        }
         webAuth.authorize({
             redirectUri: auth0Config.redirectUri,
             responseType: auth0Config.responseType,
@@ -25,21 +46,29 @@ function login() {
     }
 }
 
-
 // Logout Function
 function logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
 
-    webAuth.logout({
-        returnTo: window.location.origin,
-        clientId: auth0Config.clientId
-    });
+    if (webAuth) {
+        webAuth.logout({
+            returnTo: window.location.origin,
+            clientId: auth0Config.clientId
+        });
+    } else {
+        window.location.href = '/';
+    }
 }
 
 // Handle Authentication
 function handleAuthentication() {
+    if (!webAuth) {
+        console.error('Auth0 not initialized for handleAuthentication');
+        return;
+    }
+    
     webAuth.parseHash((err, authResult) => {
         if (authResult && authResult.accessToken && authResult.idToken) {
             // Set tokens in localStorage
@@ -65,7 +94,7 @@ function isAuthenticated() {
 // Get User Profile
 function getProfile() {
     const token = localStorage.getItem('access_token');
-    if (token) {
+    if (token && webAuth) {
         webAuth.client.userInfo(token, (err, profile) => {
             if (profile) {
                 // Safely update user status
@@ -92,45 +121,16 @@ function updateAuthUI() {
         if (loginButtons) loginButtons.style.display = 'none';
         if (signupButtons) signupButtons.style.display = 'none';
         if (logoutButton) logoutButton.style.display = 'inline-block';
-        
+
         getProfile();
-        
+
         if (userStatus) userStatus.style.display = 'block';
     } else {
         // Safely update login/signup/logout buttons
         if (loginButtons) loginButtons.style.display = 'inline-block';
         if (signupButtons) signupButtons.style.display = 'inline-block';
         if (logoutButton) logoutButton.style.display = 'none';
-        
+
         if (userStatus) userStatus.style.display = 'none';
     }
 }
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    // Check for callback
-    if (window.location.pathname.includes('callback.html')) {
-        handleAuthentication();
-    }
-
-    // Update UI
-    updateAuthUI();
-
-    // Login button
-    const loginBtn = document.getElementById('login-btn');
-    if (loginBtn) {
-        loginBtn.addEventListener('click', login);
-    }
-
-    // Signup button (same as login for Auth0)
-    const signupBtn = document.getElementById('signup-btn');
-    if (signupBtn) {
-        signupBtn.addEventListener('click', login);
-    }
-
-    // Logout button
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
-});
