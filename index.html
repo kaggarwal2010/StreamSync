@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="css/style.css">
     <meta name="description" content="StreamSync is a platform combining streaming and community features">
     <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
-    <!-- Load Auth0 SDK first -->
-    <script src="https://cdn.auth0.com/js/auth0/9.19.0/auth0.min.js"></script>
 </head>
 <body>
     <header>
@@ -57,7 +55,7 @@
 
             <div class="auth-container">
                 <!-- Login Form -->
-                <div id="login-form" class="auth-form">
+                <div id="login-form" class="auth-form active">
                     <h2>Login to StreamSync</h2>
                     <form id="login-submit">
                         <div class="form-group">
@@ -101,22 +99,8 @@
         </div>
     </div>
 
-<!-- At the end of your body tag, update the script order -->
-<script src="https://cdn.auth0.com/js/auth0/9.19.0/auth0.min.js"></script>
-<script src="js/auth0-config.js"></script>
-<!-- Wait a moment before initializing the rest of the app -->
-<script>
-    // Wait for Auth0 to initialize before loading other scripts
-    setTimeout(function() {
-        // Now load the rest of your scripts
-        const mainScript = document.createElement('script');
-        mainScript.src = 'js/main.js';
-        document.body.appendChild(mainScript);
-        
-        const authModalScript = document.createElement('script');
-        authModalScript.src = 'js/auth-modal.js';
-        document.body.appendChild(authModalScript);
-    }, 500);
-</script>
+    <!-- JavaScript files -->
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
