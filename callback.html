@@ -3,27 +3,35 @@
 <head>
     <title>Authenticating...</title>
     <script src="https://cdn.auth0.com/js/auth0/9.19.0/auth0.min.js"></script>
-    <script src="assets/js/auth0-config.js"></script>
+    <script src="js/auth0-config.js"></script>
     <script>
         window.addEventListener('load', function() {
-            alert('Callback page loaded');
-            
+            console.log('Callback page loaded');
+
+            // Use the auth0Config from the imported file
             const webAuth = new auth0.WebAuth(auth0Config);
+            
             webAuth.parseHash((err, authResult) => {
                 if (err) {
-                    alert('Authentication error: ' + JSON.stringify(err));
+                    console.error('Authentication error:', err);
                     window.location.href = '/';
                     return;
                 }
-                
+
                 if (authResult && authResult.accessToken && authResult.idToken) {
-                    alert('Authentication successful');
+                    console.log('Authentication successful');
                     localStorage.setItem('access_token', authResult.accessToken);
                     localStorage.setItem('id_token', authResult.idToken);
                     
+                    // Set expiration time
+                    const expiresAt = JSON.stringify(
+                        authResult.expiresIn * 1000 + new Date().getTime()
+                    );
+                    localStorage.setItem('expires_at', expiresAt);
+
                     window.location.href = '/';
                 } else {
-                    alert('No authentication result');
+                    console.log('No authentication result');
                     window.location.href = '/';
                 }
             });
@@ -31,6 +39,9 @@
     </script>
 </head>
 <body>
-    <p>Processing authentication... Please wait.</p>
+    <div style="text-align: center; margin-top: 100px; font-family: Arial, sans-serif;">
+        <h2>Processing authentication...</h2>
+        <p>Please wait while we complete your login.</p>
+    </div>
 </body>
 </html>

@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="css/style.css">
     <meta name="description" content="StreamSync is a platform combining streaming and community features">
     <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <!-- Load Auth0 SDK first -->
+    <script src="https://cdn.auth0.com/js/auth0/9.19.0/auth0.min.js"></script>
 </head>
 <body>
     <header>
@@ -21,6 +23,8 @@
             <div class="auth-buttons">
                 <button id="login-btn">Login</button>
                 <button id="signup-btn" class="primary-btn">Sign Up</button>
+                <button id="logout-btn" style="display: none;">Logout</button>
+                <span id="user-status" style="display: none;"></span>
             </div>
         </nav>
     </header>
@@ -46,61 +50,62 @@
         <p>&copy; 2025 StreamSync. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript files -->
-    <script src="js/main.js"></script>
-    <script src="js/auth.js"></script>
-<!-- Authentication Modal -->
-<div id="auth-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        
-        <div class="auth-container">
-            <!-- Login Form -->
-            <div id="login-form" class="auth-form">
-                <h2>Login to StreamSync</h2>
-                <form id="login-submit">
-                    <div class="form-group">
-                        <label for="login-email">Email</label>
-                        <input type="email" id="login-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="login-password">Password</label>
-                        <input type="password" id="login-password" required>
-                    </div>
-                    <button type="submit" class="primary-btn">Login</button>
-                </form>
-                <p class="switch-form">Don't have an account? <a href="#" id="switch-to-signup">Sign Up</a></p>
-            </div>
-            
-            <!-- Signup Form -->
-            <div id="signup-form" class="auth-form">
-                <h2>Create StreamSync Account</h2>
-                <form id="signup-submit">
-                    <div class="form-group">
-                        <label for="signup-username">Username</label>
-                        <input type="text" id="signup-username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signup-email">Email</label>
-                        <input type="email" id="signup-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signup-password">Password</label>
-                        <input type="password" id="signup-password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signup-confirm-password">Confirm Password</label>
-                        <input type="password" id="signup-confirm-password" required>
-                    </div>
-                    <button type="submit" class="primary-btn">Sign Up</button>
-                </form>
-                <p class="switch-form">Already have an account? <a href="#" id="switch-to-login">Login</a></p>
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+
+            <div class="auth-container">
+                <!-- Login Form -->
+                <div id="login-form" class="auth-form">
+                    <h2>Login to StreamSync</h2>
+                    <form id="login-submit">
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="primary-btn">Login</button>
+                    </form>
+                    <p class="switch-form">Don't have an account? <a href="#" id="switch-to-signup">Sign Up</a></p>
+                </div>
+
+                <!-- Signup Form -->
+                <div id="signup-form" class="auth-form">
+                    <h2>Create StreamSync Account</h2>
+                    <form id="signup-submit">
+                        <div class="form-group">
+                            <label for="signup-username">Username</label>
+                            <input type="text" id="signup-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-email">Email</label>
+                            <input type="email" id="signup-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-confirm-password">Confirm Password</label>
+                            <input type="password" id="signup-confirm-password" required>
+                        </div>
+                        <button type="submit" class="primary-btn">Sign Up</button>
+                    </form>
+                    <p class="switch-form">Already have an account? <a href="#" id="switch-to-login">Login</a></p>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<script src="https://cdn.auth0.com/js/auth0/9.19.0/auth0.min.js"></script>
-<script src="assets/js/auth0-config.js"></script>
-<script src="assets/js/auth-modal.js"></script>
+
+    <!-- JavaScript files - Order matters! -->
+    <script src="js/auth0-config.js"></script>
+    <script src="js/main.js"></script>
+    <!-- Comment out the old auth.js to avoid conflicts -->
+    <!-- <script src="js/auth.js"></script> -->
+    <script src="js/auth-modal.js"></script>
 </body>
 </html>
