@@ -332,3 +332,134 @@ footer {
     color: #7a51c0;
     text-decoration: underline;
 }
+/* Form Hint */
+.form-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Social Login */
+.social-login {
+    margin-top: 20px;
+}
+
+.divider {
+    text-align: center;
+    position: relative;
+    margin: 20px 0;
+    color: var(--text-muted);
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.divider span {
+    display: inline-block;
+    padding: 0 10px;
+    background-color: var(--medium-bg);
+    position: relative;
+    z-index: 1;
+    font-size: 12px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: var(--dark-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.social-btn svg {
+    margin-right: 10px;
+}
+
+.social-btn:hover {
+    background-color: var(--light-bg);
+}
+
+.google-btn:hover {
+    border-color: #EA4335;
+}
+
+.discord-btn:hover {
+    border-color: #7289DA;
+}
+
+/* Password strength indicator */
+#password-strength {
+    margin-top: 5px;
+    font-size: 12px;
+    transition: color 0.3s ease;
+}
+/* Password Requirements */
+.password-requirements {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.password-requirements li {
+  margin-bottom: 4px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.password-requirements li:before {
+  content: '✕';
+  position: absolute;
+  left: 0;
+  color: var(--danger-color);
+}
+
+.password-requirements li.met:before {
+  content: '✓';
+  color: var(--success-color);
+}
+
+/* Reset Password Form */
+#reset-password-form p {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

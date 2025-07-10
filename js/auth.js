@@ -1,245 +1,348 @@
 
+// StreamSync Authentication Module
 
-// User state (would normally use proper auth management)
+// User state
 let currentUser = null;
+
+// Simulated backend API (in a real app, these would be actual API calls)
+const API = {
+  // Simulate API delay
+  delay: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
+  
+  // Hash password (in a real app, this would be done server-side)
+  hashPassword: async (password) => {
+    // This is a simple hash for demonstration - NOT secure for production
+    // In a real app, use bcrypt or similar on the server
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password + "StreamSyncSalt");
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  },
+  
+  // Validate user credentials
+  validateUser: async (email, password) => {
+    await API.delay(800); // Simulate network delay
+    
+    // Get users from database
+    const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    // Hash the provided password and compare
+    const hashedPassword = await API.hashPassword(password);
+    if (user.password !== hashedPassword) {
+      throw new Error('Invalid password');
+    }
+    
+    // Return user without password
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  },
+  
+  // Register new user
+  registerUser: async (userData) => {
+    await API.delay(1000); // Simulate network delay
+    
+    // Get users from database
+    const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
+    
+    // Check if email already exists
+    if (users.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
+      throw new Error('Email already registered');
+    }
+    
+    // Hash password
+    const hashedPassword = await API.hashPassword(userData.password);
+    
+    // Create new user
+    const newUser = {
+      id: 'user_' + Date.now() + Math.floor(Math.random() * 1000),
+      username: userData.username,
+      email: userData.email,
+      password: hashedPassword,
+      avatar: `https://placehold.co/100/6441a5/ffffff?text=${userData.username.charAt(0).toUpperCase()}`,
+      createdAt: new Date().toISOString(),
+      lastLogin: new Date().toISOString()
+    };
+    
+    // Add to database
+    users.push(newUser);
+    localStorage.setItem('streamSyncUsers', JSON.stringify(users));
+    
+    // Return user without password
+    const { password: _, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
+  }
+};
 
 // Check if user is logged in
 function isLoggedIn() {
   return currentUser !== null;
 }
 
-// Login function
-function login(email, password) {
-  return new Promise((resolve, reject) => {
-    // Simulate API call
-    setTimeout(() => {
-      if (email && password) {
-        // Mock successful login
-        currentUser = {
-          id: 'user123',
-          username: email.split('@')[0],
-          email: email,
-          avatar: 'https://placehold.co/100/6441a5/ffffff?text=' + email.charAt(0).toUpperCase()
-        };
-        localStorage.setItem('streamSyncUser', JSON.stringify(currentUser));
-        updateAuthUI(); // Update UI after login
-        resolve(currentUser);
-      } else {
-        reject(new Error('Invalid credentials'));
-      }
-    }, 1000);
-  });
+// Validate email format
+function isValidEmail(email) {
+  // RFC 5322 compliant email regex
+  const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return emailRegex.test(email);
 }
 
-// Signup function
-function signup(username, email, password) {
-  return new Promise((resolve, reject) => {
-    // Simulate API call
-    setTimeout(() => {
-      if (username && email && password) {
-        // Mock successful signup
-        currentUser = {
-          id: 'user' + Math.floor(Math.random() * 1000),
-          username: username,
-          email: email,
-          avatar: 'https://placehold.co/100/6441a5/ffffff?text=' + username.charAt(0).toUpperCase()
-        };
-        localStorage.setItem('streamSyncUser', JSON.stringify(currentUser));
-        updateAuthUI(); // Update UI after signup
-        resolve(currentUser);
-      } else {
-        reject(new Error('Please fill in all fields'));
-      }
-    }, 1000);
-  });
-}
-
-// Logout function
-function logout() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      currentUser = null;
-      localStorage.removeItem('streamSyncUser');
-      updateAuthUI(); // Update UI after logout
-      resolve(true);
-    }, 500);
-  });
-}
-
-// Check for existing session on page load
-function checkSession() {
-  const savedUser = localStorage.getItem('streamSyncUser');
-  if (savedUser) {
-    try {
-      currentUser = JSON.parse(savedUser);
-      console.log('User session restored:', currentUser.username);
-      return currentUser;
-    } catch (e) {
-      console.error('Failed to parse saved user:', e);
-      localStorage.removeItem('streamSyncUser');
-    }
-  }
-  return null;
-}
-
-// Update UI based on authentication state
-function updateAuthUI() {
-  const loginBtn = document.getElementById('login-btn');
-  const signupBtn = document.getElementById('signup-btn');
-  const logoutBtn = document.getElementById('logout-btn');
-  const userStatus = document.getElementById('user-status');
+// Validate password strength
+function validatePassword(password) {
+  const errors = [];
   
-  if (isLoggedIn()) {
-    // User is logged in
-    if (loginBtn) loginBtn.style.display = 'none';
-    if (signupBtn) signupBtn.style.display = 'none';
-    if (logoutBtn) logoutBtn.style.display = 'inline-block';
-    if (userStatus) {
-      userStatus.textContent = `Welcome, ${currentUser.username}`;
-      userStatus.style.display = 'block';
-    }
-  } else {
-    // User is logged out
-    if (loginBtn) loginBtn.style.display = 'inline-block';
-    if (signupBtn) signupBtn.style.display = 'inline-block';
-    if (logoutBtn) logoutBtn.style.display = 'none';
-    if (userStatus) userStatus.style.display = 'none';
+  if (password.length < 8) {
+    errors.push("Password must be at least 8 characters long");
   }
+  
+  if (!/[A-Z]/.test(password)) {
+    errors.push("Password must contain at least one uppercase letter");
+  }
+  
+  if (!/[a-z]/.test(password)) {
+    errors.push("Password must contain at least one lowercase letter");
+  }
+  
+  if (!/\d/.test(password)) {
+    errors.push("Password must contain at least one number");
+  }
+  
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    errors.push("Password must contain at least one special character");
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors: errors
+  };
 }
 
-// Initialize auth on page load
-document.addEventListener('DOMContentLoaded', () => {
-  checkSession();
-  updateAuthUI();
-  setupAuthModal();
-});
+// Login function
+async function login(email, password) {
+  try {
+    // Validate inputs
+    if (!email || !password) {
+      throw new Error('Email and password are required');
+    }
 
-// Setup authentication modal
-function setupAuthModal() {
-  const modal = document.getElementById('auth-modal');
-  const loginBtn = document.getElementById('login-btn');
-  const signupBtn = document.getElementById('signup-btn');
-  const closeBtn = document.querySelector('.close-btn');
-  const switchToSignup = document.getElementById('switch-to-signup');
-  const switchToLogin = document.getElementById('switch-to-login');
+    if (!isValidEmail(email)) {
+      throw new Error('Please enter a valid email address');
+    }
+    
+    // Validate with backend
+    const user = await API.validateUser(email, password);
+    
+    // Update last login time
+    const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
+    const userIndex = users.findIndex(u => u.id === user.id);
+    if (userIndex !== -1) {
+      users[userIndex].lastLogin = new Date().toISOString();
+      localStorage.setItem('streamSyncUsers', JSON.stringify(users));
+    }
+    
+    // Set current user
+    currentUser = user;
+    
+    // Store session token (in a real app, this would be a JWT)
+    const sessionToken = btoa(user.id + ':' + Date.now());
+    localStorage.setItem('streamSyncSession', sessionToken);
+    localStorage.setItem('streamSyncUser', JSON.stringify(user));
+    
+    // Update UI
+    updateAuthUI();
+    
+    return user;
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;  // Re-throw the error so it can be caught by the caller
+  }
+}
+// Show form error message
+function showFormError(form, message) {
+  // Remove any existing error
+  clearFormErrors();
+  
+  // Create error element
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'form-error';
+  errorDiv.textContent = message;
+  
+  // Insert at top of form
+  const firstChild = form.firstChild;
+  form.insertBefore(errorDiv, firstChild);
+}
+
+// Clear all form errors
+function clearFormErrors() {
+  const errors = document.querySelectorAll('.form-error');
+  errors.forEach(error => error.remove());
+}
+
+// Update password strength indicator
+function updatePasswordStrength(password) {
+  const strengthIndicator = document.getElementById('password-strength');
+  if (!strengthIndicator) return;
+  
+  // Check password strength
+  const hasLength = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+  
+  let strength = 'weak';
+  let color = 'var(--danger-color)';
+  
+  if (hasLength && hasUpper && hasLower && hasNumber && hasSpecial) {
+    strength = 'very strong';
+    color = 'var(--success-color)';
+  } else if (hasLength && hasUpper && hasLower && hasNumber) {
+    strength = 'strong';
+    color = '#43b581'; // Success color
+  } else if (hasLength && ((hasUpper && hasLower) || (hasLower && hasNumber) || (hasUpper && hasNumber))) {
+    strength = 'medium';
+    color = 'var(--warning-color)';
+  }
+  
+  // Create requirements list
+  let requirementsList = '<ul class="password-requirements">';
+  requirementsList += `<li class="${hasLength ? 'met' : 'unmet'}">At least 8 characters</li>`;
+  requirementsList += `<li class="${hasUpper ? 'met' : 'unmet'}">At least 1 uppercase letter</li>`;
+  requirementsList += `<li class="${hasLower ? 'met' : 'unmet'}">At least 1 lowercase letter</li>`;
+  requirementsList += `<li class="${hasNumber ? 'met' : 'unmet'}">At least 1 number</li>`;
+  requirementsList += `<li class="${hasSpecial ? 'met' : 'unmet'}">At least 1 special character</li>`;
+  requirementsList += '</ul>';
+  
+  // Update indicator
+  strengthIndicator.innerHTML = `Password strength: <span style="color:${color}">${strength}</span>${requirementsList}`;
+}
+
+// Handle social login
+function handleSocialLogin(provider) {
+  // In a real app, this would redirect to OAuth flow
+  console.log(`Initiating ${provider} login`);
+  
+  // Simulate successful social login after delay
+  setTimeout(() => {
+    const user = {
+      id: 'social_' + Date.now(),
+      username: `${provider}User${Math.floor(Math.random() * 1000)}`,
+      email: `user${Math.floor(Math.random() * 1000)}@${provider.toLowerCase()}.example.com`,
+      avatar: `https://placehold.co/100/6441a5/ffffff?text=${provider.charAt(0)}`,
+      provider: provider
+    };
+    
+    // Set current user
+    currentUser = user;
+    
+    // Store session
+    const sessionToken = btoa(user.id + ':' + Date.now());
+    localStorage.setItem('streamSyncSession', sessionToken);
+    localStorage.setItem('streamSyncUser', JSON.stringify(user));
+    
+    // Update UI
+    updateAuthUI();
+    
+    // Close modal
+    const modal = document.getElementById('auth-modal');
+    if (modal) modal.style.display = 'none';
+    
+    console.log(`${provider} login successful:`, user);
+  }, 1500);
+}
+
+// Show reset password form
+function showResetPasswordForm(email) {
   const loginForm = document.getElementById('login-form');
-  const signupForm = document.getElementById('signup-form');
-  const loginSubmit = document.getElementById('login-submit');
-  const signupSubmit = document.getElementById('signup-submit');
-
-  // Open modal with login form
-  if (loginBtn) {
-    loginBtn.addEventListener('click', (e) => {
+  if (!loginForm) return;
+  
+  // Hide login form
+  loginForm.classList.remove('active');
+  
+  // Check if reset form already exists
+  let resetForm = document.getElementById('reset-password-form');
+  
+  if (!resetForm) {
+    // Create reset form
+    resetForm = document.createElement('div');
+    resetForm.id = 'reset-password-form';
+    resetForm.className = 'auth-form';
+    resetForm.innerHTML = `
+      <h2>Reset Password</h2>
+      <p>Enter your email address to receive a password reset link.</p>
+      <form id="reset-submit">
+        <div class="form-group">
+          <label for="reset-email">Email</label>
+          <input type="email" id="reset-email" value="${email}" required>
+        </div>
+        <button type="submit" class="primary-btn">Send Reset Link</button>
+      </form>
+      <p class="switch-form"><a href="#" id="back-to-login">Back to Login</a></p>
+    `;
+    
+    // Add to auth container
+    const authContainer = document.querySelector('.auth-container');
+    authContainer.appendChild(resetForm);
+    
+    // Setup back to login link
+    const backToLogin = document.getElementById('back-to-login');
+    backToLogin.addEventListener('click', (e) => {
       e.preventDefault();
-      modal.style.display = 'block';
-      loginForm.classList.add('active');
-      signupForm.classList.remove('active');
-    });
-  }
-
-  // Open modal with signup form
-  if (signupBtn) {
-    signupBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      modal.style.display = 'block';
-      signupForm.classList.add('active');
-      loginForm.classList.remove('active');
-    });
-  }
-
-  // Close modal
-  if (closeBtn) {
-    closeBtn.addEventListener('click', () => {
-      modal.style.display = 'none';
-    });
-  }
-
-  // Switch between forms
-  if (switchToSignup) {
-    switchToSignup.addEventListener('click', (e) => {
-      e.preventDefault();
-      loginForm.classList.remove('active');
-      signupForm.classList.add('active');
-    });
-  }
-
-  if (switchToLogin) {
-    switchToLogin.addEventListener('click', (e) => {
-      e.preventDefault();
-      signupForm.classList.remove('active');
+      resetForm.classList.remove('active');
       loginForm.classList.add('active');
     });
-  }
-
-  // Handle login form submission
-  if (loginSubmit) {
-    loginSubmit.addEventListener('submit', (e) => {
+    
+    // Setup reset form submission
+    const resetSubmit = document.getElementById('reset-submit');
+    resetSubmit.addEventListener('submit', (e) => {
       e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
+      const resetEmail = document.getElementById('reset-email').value.trim();
       
-      login(email, password)
-        .then(user => {
-          console.log('Login successful:', user);
-          modal.style.display = 'none';
-        })
-        .catch(error => {
-          console.error('Login failed:', error);
-          alert('Login failed: ' + error.message);
-        });
-    });
-  }
-
-  // Handle signup form submission
-  if (signupSubmit) {
-    signupSubmit.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const username = document.getElementById('signup-username').value;
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-      const confirmPassword = document.getElementById('signup-confirm-password').value;
-      
-      if (password !== confirmPassword) {
-        alert('Passwords do not match');
+      if (!isValidEmail(resetEmail)) {
+        alert('Please enter a valid email address');
         return;
       }
       
-      signup(username, email, password)
-        .then(user => {
-          console.log('Signup successful:', user);
-          modal.style.display = 'none';
-        })
-        .catch(error => {
-          console.error('Signup failed:', error);
-          alert('Signup failed: ' + error.message);
-        });
+      // Show loading state
+      const submitBtn = resetSubmit.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.innerHTML = '<span class="spinner"></span>Sending...';
+      submitBtn.disabled = true;
+      
+      // Simulate API call
+      setTimeout(() => {
+        alert(`Password reset link sent to ${resetEmail}. Check your email inbox.`);
+        
+        // Reset button
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        
+        // Go back to login
+        resetForm.classList.remove('active');
+        loginForm.classList.add('active');
+      }, 1500);
     });
   }
-
-  // Close modal when clicking outside
-  window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
-    }
-  });
   
-  // Add logout functionality
-  const logoutButton = document.getElementById('logout-btn');
-  if (logoutButton) {
-    logoutButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      logout()
-        .then(() => {
-          console.log('Logged out successfully');
-        })
-        .catch(error => {
-          console.error('Logout error:', error);
-        });
-    });
+  // Show reset form
+  resetForm.classList.add('active');
+}
+
+// Initialize database if empty
+function initializeDatabase() {
+  if (!localStorage.getItem('streamSyncUsers')) {
+    localStorage.setItem('streamSyncUsers', '[]');
   }
 }
 
-// Export auth functions (for use with import in other files later)
+// Call database initialization
+initializeDatabase();
+
+// Export auth functions
 window.StreamSyncAuth = {
   login,
   signup,
