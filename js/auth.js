@@ -1,7 +1,113 @@
 // StreamSync Authentication Module
 
+// StreamSync Authentication Module
+
 // User state
 let currentUser = null;
+
+// Simulated backend API (in a real app, these would be actual API calls)
+const AuthAPI = {
+  // Simulate API delay
+  delay: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
+
+  // Validate user credentials
+  validateUser: async (email, password) => {
+    await AuthAPI.delay(800);
+
+    // Get users from database
+    const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (user.password !== password) {
+      throw new Error('Invalid password');
+    }
+
+    return user;
+  },
+
+  // Register new user
+  registerUser: async (userData) => {
+    await AuthAPI.delay(1000);
+
+    // Get users from database
+    const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
+
+    // Check if email already exists
+    if (users.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
+      throw new Error('Email already registered');
+    }
+
+    // Create new user
+    const newUser = {
+      id: 'user_' + Date.now(),
+      ...userData,
+      createdAt: new Date().toISOString()
+    };
+
+    // Add to database
+    users.push(newUser);
+    localStorage.setItem('streamSyncUsers', JSON.stringify(users));
+
+    return newUser;
+  }
+};
+
+// Rest of the code remains the same, but replace all instances of `API` with `AuthAPI`
+
+// For example, in the login submission:
+addEventListenerSafely(loginSubmit, 'submit', async function(e) {
+  e.preventDefault();
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+
+  if (!emailInput || !passwordInput) {
+    console.error('Login input elements not found');
+    return;
+  }
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  try {
+    const user = await AuthAPI.validateUser(email, password);
+    currentUser = user;
+    localStorage.setItem('streamSyncUser', JSON.stringify(user));
+    updateAuthUI();
+    closeModal();
+    alert(`Login successful! Welcome, ${user.username}`);
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+// And in the signup submission:
+addEventListenerSafely(signupSubmit, 'submit', async function(e) {
+  // ... other code remains the same
+  try {
+    const user = await AuthAPI.registerUser({ username, email, password });
+    currentUser = user;
+    localStorage.setItem('streamSyncUser', JSON.stringify(user));
+    updateAuthUI();
+    closeModal();
+    alert(`Signup successful! Welcome, ${user.username}`);
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+// Update the exported functions
+window.StreamSyncAuth = {
+  login: AuthAPI.validateUser,
+  signup: AuthAPI.registerUser,
+  logout,
+  isLoggedIn: () => currentUser !== null,
+  getCurrentUser: () => currentUser
+};
+
 
 // Simulated backend API (in a real app, these would be actual API calls)
 const API = {
