@@ -7,49 +7,49 @@ let currentUser = null;
 const API = {
   // Simulate API delay
   delay: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
-  
+
   // Validate user credentials
   validateUser: async (email, password) => {
     await API.delay(800);
-    
+
     // Get users from database
     const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
     const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-    
+
     if (!user) {
       throw new Error('User not found');
     }
-    
+
     if (user.password !== password) {
       throw new Error('Invalid password');
     }
-    
+
     return user;
   },
-  
+
   // Register new user
   registerUser: async (userData) => {
     await API.delay(1000);
-    
+
     // Get users from database
     const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
-    
+
     // Check if email already exists
     if (users.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
       throw new Error('Email already registered');
     }
-    
+
     // Create new user
     const newUser = {
       id: 'user_' + Date.now(),
       ...userData,
       createdAt: new Date().toISOString()
     };
-    
+
     // Add to database
     users.push(newUser);
     localStorage.setItem('streamSyncUsers', JSON.stringify(users));
-    
+
     return newUser;
   }
 };
@@ -63,27 +63,27 @@ function isValidEmail(email) {
 // Validate password strength
 function validatePassword(password) {
   const errors = [];
-  
+
   if (password.length < 8) {
     errors.push("Password must be at least 8 characters long");
   }
-  
+
   if (!/[A-Z]/.test(password)) {
     errors.push("Password must contain at least one uppercase letter");
   }
-  
+
   if (!/[a-z]/.test(password)) {
     errors.push("Password must contain at least one lowercase letter");
   }
-  
+
   if (!/\d/.test(password)) {
     errors.push("Password must contain at least one number");
   }
-  
+
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
     errors.push("Password must contain at least one special character");
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors: errors
@@ -93,7 +93,7 @@ function validatePassword(password) {
 // Setup authentication modal
 function setupAuthModal() {
   console.log('Setting up auth modal');
-  
+
   const modal = document.getElementById('auth-modal');
   const loginBtn = document.getElementById('login-btn');
   const signupBtn = document.getElementById('signup-btn');
@@ -145,10 +145,10 @@ function setupAuthModal() {
 
   // Login button
   addEventListenerSafely(loginBtn, 'click', openLoginModal);
-  
+
   // Signup button
   addEventListenerSafely(signupBtn, 'click', openSignupModal);
-  
+
   // Close button
   addEventListenerSafely(closeBtn, 'click', closeModal);
 
@@ -171,7 +171,7 @@ function setupAuthModal() {
     e.preventDefault();
     const emailInput = document.getElementById('login-email');
     const passwordInput = document.getElementById('login-password');
-    
+
     if (!emailInput || !passwordInput) {
       console.error('Login input elements not found');
       return;
@@ -182,8 +182,11 @@ function setupAuthModal() {
 
     try {
       const user = await API.validateUser(email, password);
-      alert(`Login successful! Welcome, ${user.username}`);
+      currentUser = user;
+      localStorage.setItem('streamSyncUser', JSON.stringify(user));
+      updateAuthUI();
       closeModal();
+      alert(`Login successful! Welcome, ${user.username}`);
     } catch (error) {
       alert(error.message);
     }
@@ -196,7 +199,7 @@ function setupAuthModal() {
     const emailInput = document.getElementById('signup-email');
     const passwordInput = document.getElementById('signup-password');
     const confirmPasswordInput = document.getElementById('signup-confirm-password');
-    
+
     if (!usernameInput || !emailInput || !passwordInput || !confirmPasswordInput) {
       console.error('Signup input elements not found');
       return;
@@ -221,8 +224,11 @@ function setupAuthModal() {
 
     try {
       const user = await API.registerUser({ username, email, password });
-      alert(`Signup successful! Welcome, ${user.username}`);
+      currentUser = user;
+      localStorage.setItem('streamSyncUser', JSON.stringify(user));
+      updateAuthUI();
       closeModal();
+      alert(`Signup successful! Welcome, ${user.username}`);
     } catch (error) {
       alert(error.message);
     }
@@ -242,7 +248,7 @@ function setupAuthModal() {
 // Handle social login
 function handleSocialLogin(provider, isSignup = false) {
   console.log(`Initiating ${provider} ${isSignup ? 'signup' : 'login'}`);
-  
+
   // Simulate successful social login after delay
   setTimeout(() => {
     const user = {
@@ -252,22 +258,22 @@ function handleSocialLogin(provider, isSignup = false) {
       avatar: `https://placehold.co/100/6441a5/ffffff?text=${provider.charAt(0)}`,
       provider: provider
     };
-    
+
     // Set current user
     currentUser = user;
-    
+
     // Store session
     const sessionToken = btoa(user.id + ':' + Date.now());
     localStorage.setItem('streamSyncSession', sessionToken);
     localStorage.setItem('streamSyncUser', JSON.stringify(user));
-    
+
     // Update UI
     updateAuthUI();
-    
+
     // Close modal
     const modal = document.getElementById('auth-modal');
     if (modal) modal.style.display = 'none';
-    
+
     console.log(`${provider} ${isSignup ? 'signup' : 'login'} successful:`, user);
   }, 1500);
 }
