@@ -8,23 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeUI() {
-    // Remove any existing event listeners that might have alerts
-    const loginBtn = document.getElementById('login-btn');
-    const signupBtn = document.getElementById('signup-btn');
-
-    // If buttons exist, ensure they don't have any alert-triggering listeners
-    if (loginBtn) {
-        // Remove all existing event listeners
-        const newLoginBtn = loginBtn.cloneNode(true);
-        loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
-    }
-
-    if (signupBtn) {
-        // Remove all existing event listeners
-        const newSignupBtn = signupBtn.cloneNode(true);
-        signupBtn.parentNode.replaceChild(newSignupBtn, signupBtn);
-    }
-
     // Load featured streams
     setTimeout(() => {
         loadFeaturedStreams();
