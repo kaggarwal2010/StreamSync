@@ -214,5 +214,47 @@
     <script src="js/chat.js"></script>
     <script src="js/stream-viewer.js"></script>
     <script src="js/streaming.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Retrieve stream metadata from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const streamMetadataParam = urlParams.get('stream');
+
+        if (streamMetadataParam) {
+            try {
+                const streamMetadata = JSON.parse(decodeURIComponent(streamMetadataParam));
+
+                // Update stream info in UI
+                const streamTitleElement = document.querySelector('.stream-details .about-stream h3');
+                const streamDescriptionElement = document.querySelector('.stream-details .about-stream p');
+
+                if (streamTitleElement) streamTitleElement.textContent = streamMetadata.title;
+                if (streamDescriptionElement) streamDescriptionElement.textContent = streamMetadata.description || 'Welcome to my stream!';
+
+                // Initialize streaming
+                const streamSync = new StreamSync(streamMetadata);
+                
+                // Setup stream controls
+                const startBtn = document.getElementById('startStreamBtn');
+                const stopBtn = document.getElementById('stopStreamBtn');
+
+                startBtn.addEventListener('click', () => {
+                    streamSync.startStreaming();
+                    startBtn.style.display = 'none';
+                    stopBtn.style.display = 'block';
+                });
+
+                stopBtn.addEventListener('click', () => {
+                    streamSync.stopStreaming();
+                    stopBtn.style.display = 'none';
+                    startBtn.style.display = 'block';
+                });
+
+            } catch (error) {
+                console.error('Failed to parse stream metadata', error);
+            }
+        }
+    });
+</script>
 </body>
 </html>
