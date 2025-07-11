@@ -1,33 +1,58 @@
 // StreamSync Authentication Module
 
-// StreamSync Authentication Module
-
 // User state
 let currentUser = null;
 
-// Simulated backend API (in a real app, these would be actual API calls)
+// Simulated backend API
 const AuthAPI = {
-  // Simulate API delay
-  delay: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
+    // Simulate API delay
+    delay: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
 
-  // Validate user credentials
-  validateUser: async (email, password) => {
-    await AuthAPI.delay(800);
+    // Validate user credentials
+    validateUser: async (email, password) => {
+        await AuthAPI.delay(800);
 
-    // Get users from database
-    const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+        // Get users from database
+        const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
+        const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
-    if (!user) {
-      throw new Error('User not found');
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        if (user.password !== password) {
+            throw new Error('Invalid password');
+        }
+
+        return user;
+    },
+
+    // Register new user
+    registerUser: async (userData) => {
+        await AuthAPI.delay(1000);
+
+        // Get users from database
+        const users = JSON.parse(localStorage.getItem('streamSyncUsers') || '[]');
+
+        // Check if email already exists
+        if (users.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
+            throw new Error('Email already registered');
+        }
+
+        // Create new user
+        const newUser = {
+            id: 'user_' + Date.now(),
+            ...userData,
+            createdAt: new Date().toISOString()
+        };
+
+        // Add to database
+        users.push(newUser);
+        localStorage.setItem('streamSyncUsers', JSON.stringify(users));
+
+        return newUser;
     }
-
-    if (user.password !== password) {
-      throw new Error('Invalid password');
-    }
-
-    return user;
-  },
+};
 
   // Register new user
   registerUser: async (userData) => {
@@ -54,7 +79,7 @@ const AuthAPI = {
 
     return newUser;
   }
-};
+
 
 // Rest of the code remains the same, but replace all instances of `API` with `AuthAPI`
 
@@ -101,12 +126,13 @@ addEventListenerSafely(signupSubmit, 'submit', async function(e) {
 
 // Update the exported functions
 window.StreamSyncAuth = {
-  login: AuthAPI.validateUser,
-  signup: AuthAPI.registerUser,
-  logout,
-  isLoggedIn: () => currentUser !== null,
-  getCurrentUser: () => currentUser
+    login: AuthAPI.validateUser,
+    signup: AuthAPI.registerUser,
+    logout,
+    isLoggedIn: () => currentUser !== null,
+    getCurrentUser: () => currentUser
 };
+
 
 
 // Simulated backend API (in a real app, these would be actual API calls)
@@ -444,25 +470,30 @@ function initializeDatabase() {
 // Call database initialization
 initializeDatabase();
 
-// Ensure DOM is fully loaded before setting up modal
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM fully loaded');
-  checkSession();
-  updateAuthUI();
-  setupAuthModal();
+    console.log('DOM fully loaded');
+    
+    // Add debugging logs
+    console.log('Login button:', document.getElementById('login-btn'));
+    console.log('Signup button:', document.getElementById('signup-btn'));
+    console.log('Login form:', document.getElementById('login-submit'));
+    console.log('Signup form:', document.getElementById('signup-submit'));
 
-  // Add logout button event listener
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', logout);
-  }
+    checkSession();
+    updateAuthUI();
+    setupAuthModal();
+
+    // Add logout button event listener
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 });
 
-// Export auth functions for potential external use
 window.StreamSyncAuth = {
-  login: API.validateUser,
-  signup: API.registerUser,
-  logout,
-  isLoggedIn: () => currentUser !== null,
-  getCurrentUser: () => currentUser
+    login: AuthAPI.validateUser,
+    signup: AuthAPI.registerUser,
+    logout,
+    isLoggedIn: () => currentUser !== null,
+    getCurrentUser: () => currentUser
 };
