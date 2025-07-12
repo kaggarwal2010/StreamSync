@@ -57,7 +57,7 @@ function loadFeaturedStreams() {
         streamCard.innerHTML = `
             <img src="${stream.thumbnail}" alt="${stream.title}" style="width: 100%; height: 170px; object-fit: cover;">
             <div style="padding: 15px;">
-                <h3 style="margin: 0 0 5px 0; font-size: 16px;">${stream.title}</h3>
+                <h3 style="margin: 0 0 5px 0; font-size: 16px; color: white;">${stream.title}</h3>
                 <p style="margin: 0; color: var(--text-muted); font-size: 14px;">${stream.user}</p>
                 <p style="margin: 5px 0 0 0; font-size: 12px; color: var(--danger-color);">
                     <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: var(--danger-color); margin-right: 5px;"></span>
@@ -68,9 +68,14 @@ function loadFeaturedStreams() {
 
         streamCard.addEventListener('click', () => {
             console.log(`Stream clicked: ${stream.title}`);
-            window.location.href = 'stream-viewer.html';
+            // You can add navigation logic here
         });
 
         streamGrid.appendChild(streamCard);
     });
 }
+
+// Call the function when the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    loadFeaturedStreams();
+});
