@@ -25,7 +25,6 @@ function initializeUI() {
 function loadFeaturedStreams() {
     const streamGrid = document.querySelector('.stream-grid');
     
-    // Check if stream grid exists
     if (!streamGrid) {
         console.error('Stream grid not found');
         return;
@@ -34,25 +33,28 @@ function loadFeaturedStreams() {
     // Clear any existing content
     streamGrid.innerHTML = '';
 
-    // Sample stream data
+    // Sample stream data with full image URLs
     const streams = [
         {
             title: 'Gaming Stream',
             user: 'GameMaster42',
             viewers: 1245,
-            thumbnail: 'https://via.placeholder.com/300x200?text=Gaming+Stream'
+            thumbnail: 'https://placehold.co/300x200/6441a5/ffffff?text=Gaming+Stream',
+            link: 'stream-viewer.html'
         },
         {
             title: 'Coding Stream',
             user: 'DevGuru',
             viewers: 856,
-            thumbnail: 'https://via.placeholder.com/300x200?text=Coding+Stream'
+            thumbnail: 'https://placehold.co/300x200/7289da/ffffff?text=Coding+Stream',
+            link: 'stream-viewer.html'
         },
         {
             title: 'Art Stream',
             user: 'ArtistExtraordinaire',
             viewers: 723,
-            thumbnail: 'https://via.placeholder.com/300x200?text=Art+Stream'
+            thumbnail: 'https://placehold.co/300x200/43b581/ffffff?text=Art+Stream',
+            link: 'stream-viewer.html'
         }
     ];
 
@@ -71,6 +73,12 @@ function loadFeaturedStreams() {
                 </div>
             </div>
         `;
+        
+        // Add click event to navigate to stream viewer
+        streamCard.addEventListener('click', () => {
+            window.location.href = stream.link;
+        });
+
         streamGrid.appendChild(streamCard);
     });
 
