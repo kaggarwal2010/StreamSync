@@ -1,13 +1,14 @@
+I'll update the stream-viewer.html to include the full authentication modal, tab sections, and stream info sections while maintaining the new streaming functionality:
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamSync - Stream Viewer</title>
+    <title>StreamSync - Live Streaming</title>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/stream-viewer.css">
-    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
 </head>
 <body class="stream-page">
     <header>
@@ -37,16 +38,14 @@
                                 <path d="M17 9.5L12 14.5L7 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                             <p>Stream is currently offline</p>
-                            
-                            <!-- Add these streaming control buttons -->
+
                             <div id="streamControls">
-                                <button id="startStreamBtn" class="primary-btn">Start Streaming</button>
-                                <button id="stopStreamBtn" class="primary-btn" style="display:none;">Stop Streaming</button>
+                                <button id="start-stream-btn" class="primary-btn">Start Streaming</button>
+                                <button id="stop-stream-btn" class="primary-btn" style="display:none;">Stop Streaming</button>
                             </div>
+
+                            <video id="stream-video" controls style="display:none; max-width: 100%; background: black;"></video>
                         </div>
-                        
-                        <!-- Add video element for streaming -->
-                        <video id="streamPlayer" controls style="display:none; max-width: 100%; background: black;"></video>
                     </div>
                 </div>
             </div>
@@ -59,13 +58,9 @@
                     </div>
                 </div>
 
-                <div class="chat-messages" id="chat-messages">
+                <div id="chat-messages" class="chat-messages">
                     <div class="chat-welcome">
                         <p>Welcome to the chat! Remember to follow our community guidelines.</p>
-                    </div>
-
-                    <div class="system-message">
-                        <span>GameMaster42 started streaming 2 hours ago</span>
                     </div>
                 </div>
 
@@ -85,20 +80,20 @@
 
             <div class="tab-content" id="about-tab">
                 <div class="about-stream">
-                    <h3>About the Stream</h3>
-                    <p>Welcome to my stream! I play various games and interact with my awesome community. Don't forget to follow for notifications when I go live!</p>
+                    <h3 id="stream-title">Stream Title</h3>
+                    <p id="stream-description">Stream description will appear here</p>
 
                     <div class="streamer-stats">
                         <div class="stat-block">
-                            <span class="stat-number">12.5K</span>
+                            <span class="stat-number" id="followers-count">0</span>
                             <span class="stat-label">Followers</span>
                         </div>
                         <div class="stat-block">
-                            <span class="stat-number">142</span>
+                            <span class="stat-number" id="videos-count">0</span>
                             <span class="stat-label">Videos</span>
                         </div>
                         <div class="stat-block">
-                            <span class="stat-number">March 2023</span>
+                            <span class="stat-number" id="join-date">-</span>
                             <span class="stat-label">Joined</span>
                         </div>
                     </div>
@@ -150,6 +145,27 @@
                 </div>
             </div>
         </div>
+
+        <form id="stream-setup-form" style="display:none;">
+            <div class="form-group">
+                <label for="stream-title">Stream Title</label>
+                <input type="text" id="stream-title" required>
+            </div>
+            <div class="form-group">
+                <label for="stream-category">Category</label>
+                <select id="stream-category" required>
+                    <option value="gaming">Gaming</option>
+                    <option value="music">Music</option>
+                    <option value="art">Art</option>
+                    <option value="talk">Talk Show</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="stream-description">Stream Description</label>
+                <textarea id="stream-description" placeholder="Tell viewers about your stream"></textarea>
+            </div>
+            <button type="submit" class="primary-btn">Go Live</button>
+        </form>
     </main>
 
     <footer>
@@ -210,51 +226,42 @@
     <!-- JavaScript files -->
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/stream.js"></script>
-    <script src="js/chat.js"></script>
-    <script src="js/stream-viewer.js"></script>
     <script src="js/streaming.js"></script>
+    <script src="js/chat.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Retrieve stream metadata from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const streamMetadataParam = urlParams.get('stream');
+        // Tab switching logic
+        const tabs = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
 
-        if (streamMetadataParam) {
-            try {
-                const streamMetadata = JSON.parse(decodeURIComponent(streamMetadataParam));
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Remove hidden class from all tab contents
+                tabContents.forEach(tc => tc.classList.add('hidden'));
 
-                // Update stream info in UI
-                const streamTitleElement = document.querySelector('.stream-details .about-stream h3');
-                const streamDescriptionElement = document.querySelector('.stream-details .about-stream p');
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                // Show corresponding tab content
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+            });
+        });
 
-                if (streamTitleElement) streamTitleElement.textContent = streamMetadata.title;
-                if (streamDescriptionElement) streamDescriptionElement.textContent = streamMetadata.description || 'Welcome to my stream!';
+        // Update stream details from streaming setup
+        const streamForm = document.getElementById('stream-setup-form');
+        streamForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('stream-title').value;
+            const description = document.getElementById('stream-description').value;
+            const category = document.getElementById('stream-category').value;
 
-                // Initialize streaming
-                const streamSync = new StreamSync(streamMetadata);
-                
-                // Setup stream controls
-                const startBtn = document.getElementById('startStreamBtn');
-                const stopBtn = document.getElementById('stopStreamBtn');
-
-                startBtn.addEventListener('click', () => {
-                    streamSync.startStreaming();
-                    startBtn.style.display = 'none';
-                    stopBtn.style.display = 'block';
-                });
-
-                stopBtn.addEventListener('click', () => {
-                    streamSync.stopStreaming();
-                    stopBtn.style.display = 'none';
-                    startBtn.style.display = 'block';
-                });
-
-            } catch (error) {
-                console.error('Failed to parse stream metadata', error);
-            }
-        }
+            // Update stream details in About tab
+            document.getElementById('stream-title').textContent = title;
+            document.getElementById('stream-description').textContent = description || 'No description provided';
+        });
     });
-</script>
+    </script>
 </body>
 </html>
