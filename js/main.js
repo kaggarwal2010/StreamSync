@@ -21,10 +21,10 @@ function initializeUI() {
     }, 1500);
 }
 
-// Function to load featured streams
 function loadFeaturedStreams() {
+    console.log('Loading featured streams...');
     const streamGrid = document.querySelector('.stream-grid');
-    
+
     if (!streamGrid) {
         console.error('Stream grid not found');
         return;
@@ -33,28 +33,28 @@ function loadFeaturedStreams() {
     // Clear any existing content
     streamGrid.innerHTML = '';
 
-    // Sample stream data with full image URLs
+    // Sample stream data with colors instead of images
     const streams = [
         {
             title: 'Gaming Stream',
             user: 'GameMaster42',
             viewers: 1245,
-            thumbnail: 'https://placehold.co/300x200/6441a5/ffffff?text=Gaming+Stream',
-            link: 'stream-viewer.html'
+            color: '#6441a5', // Twitch purple
+            streamId: 'gaming123'
         },
         {
             title: 'Coding Stream',
             user: 'DevGuru',
             viewers: 856,
-            thumbnail: 'https://placehold.co/300x200/7289da/ffffff?text=Coding+Stream',
-            link: 'stream-viewer.html'
+            color: '#7289da', // Discord blue
+            streamId: 'coding456'
         },
         {
             title: 'Art Stream',
             user: 'ArtistExtraordinaire',
             viewers: 723,
-            thumbnail: 'https://placehold.co/300x200/43b581/ffffff?text=Art+Stream',
-            link: 'stream-viewer.html'
+            color: '#43b581', // Green
+            streamId: 'art789'
         }
     ];
 
@@ -62,8 +62,21 @@ function loadFeaturedStreams() {
     streams.forEach(stream => {
         const streamCard = document.createElement('div');
         streamCard.className = 'stream-card';
+        
+        // Create a colored div with text instead of an image
         streamCard.innerHTML = `
-            <img src="${stream.thumbnail}" alt="${stream.title}" style="width: 100%; height: 200px; object-fit: cover;">
+            <div class="stream-thumbnail" style="
+                background-color: ${stream.color}; 
+                height: 200px; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                color: white; 
+                font-weight: bold;
+                font-size: 20px;
+            ">
+                ${stream.title}
+            </div>
             <div class="stream-info">
                 <h3>${stream.title}</h3>
                 <p>${stream.user}</p>
@@ -71,22 +84,31 @@ function loadFeaturedStreams() {
                     <span class="live-dot"></span>
                     ${stream.viewers} viewers
                 </div>
+                <button class="primary-btn watch-stream-btn">Watch Stream</button>
             </div>
         `;
-        
-        // Add click event to navigate to stream viewer
-        streamCard.addEventListener('click', () => {
-            window.location.href = stream.link;
+
+        // Add click event to the button
+        streamCard.querySelector('.watch-stream-btn').addEventListener('click', () => {
+            console.log('Watch button clicked for:', stream.title);
+            
+            // Create stream metadata
+            const streamMetadata = {
+                title: stream.title,
+                user: stream.user,
+                description: `This is the ${stream.title.toLowerCase()} by ${stream.user}`,
+                category: stream.title.split(' ')[0], // Use first word as category
+                viewers: stream.viewers,
+                streamId: stream.streamId
+            };
+            
+            // Encode and pass the metadata in the URL
+            const encodedMetadata = encodeURIComponent(JSON.stringify(streamMetadata));
+            window.location.href = `stream-viewer.html?stream=${encodedMetadata}`;
         });
 
         streamGrid.appendChild(streamCard);
     });
 
-    console.log('Featured streams loaded');
+    console.log('Featured streams loaded successfully');
 }
-
-// Ensure DOM is fully loaded before running
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM fully loaded');
-    loadFeaturedStreams();
-});
