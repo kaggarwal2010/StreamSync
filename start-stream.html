@@ -22,83 +22,127 @@
     <main class="start-stream-container">
         <div class="stream-setup">
             <h1>Start Your Stream</h1>
-            
-            <div class="stream-preview-section">
-                <h2>Stream Preview</h2>
-                <video id="stream-preview" autoplay muted></video>
-                <div id="camera-permissions-message" class="warning">
-                    Please grant camera and microphone permissions
-                </div>
+
+            <div class="start-streaming-section">
+                <button id="start-streaming-btn" class="primary-btn">Start Streaming</button>
             </div>
+        </div>
 
-            <form id="stream-setup-form">
-                <div class="form-group">
-                    <label for="stream-title">Stream Title</label>
-                    <input 
-                        type="text" 
-                        id="stream-title" 
-                        placeholder="What are you streaming today?" 
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="stream-category">Category</label>
-                    <select id="stream-category" required>
-                        <option value="">Select a Category</option>
-                        <option value="gaming">Gaming</option>
-                        <option value="music">Music</option>
-                        <option value="art">Art</option>
-                        <option value="talk-show">Talk Show</option>
-                        <option value="coding">Coding</option>
-                        <option value="education">Education</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="stream-description">Stream Description (Optional)</label>
-                    <textarea 
-                        id="stream-description" 
-                        placeholder="Tell viewers what your stream is about"
-                    ></textarea>
-                </div>
-
-                <div class="stream-privacy">
-                    <h3>Stream Privacy</h3>
-                    <div class="privacy-options">
-                        <label>
-                            <input 
-                                type="radio" 
-                                name="stream-privacy" 
-                                value="public" 
-                                checked
-                            > Public
-                        </label>
-                        <label>
-                            <input 
-                                type="radio" 
-                                name="stream-privacy" 
-                                value="followers"
-                            > Followers Only
-                        </label>
-                        <label>
-                            <input 
-                                type="radio" 
-                                name="stream-privacy" 
-                                value="private"
-                            > Private
-                        </label>
+        <!-- Stream Setup Modal -->
+        <div id="stream-setup-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Stream Setup</h2>
+                <form id="stream-setup-form">
+                    <div class="form-group">
+                        <label for="stream-title">Stream Title</label>
+                        <input 
+                            type="text" 
+                            id="stream-title" 
+                            placeholder="What are you streaming today?" 
+                            required
+                        >
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label>Stream Audience</label>
+                        <div class="audience-options">
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="stream-audience" 
+                                    value="all-ages" 
+                                    checked
+                                > Suitable for all ages
+                            </label>
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="stream-audience" 
+                                    value="mature"
+                                > Mature content (18+)
+                            </label>
+                        </div>
+                    </div>
 
-                <button 
-                    type="submit" 
-                    id="start-streaming-btn" 
-                    class="primary-btn"
-                >
-                    Go Live
-                </button>
-            </form>
+                    <div class="form-group">
+                        <label for="stream-category">Category</label>
+                        <select id="stream-category" required>
+                            <option value="">Select a Category</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="music">Music</option>
+                            <option value="art">Art</option>
+                            <option value="talk-show">Talk Show</option>
+                            <option value="coding">Coding</option>
+                            <option value="education">Education</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stream-description">Stream Description (Optional)</label>
+                        <textarea 
+                            id="stream-description" 
+                            placeholder="Tell viewers what your stream is about"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stream Audience</label>
+                        <div class="audience-options">
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="stream-audience" 
+                                    value="all-ages" 
+                                    checked
+                                > Suitable for all ages
+                            </label>
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="stream-audience" 
+                                    value="mature"
+                                > Mature content (18+)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="stream-privacy">
+                        <h3>Stream Privacy</h3>
+                        <div class="privacy-options">
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="stream-privacy" 
+                                    value="public" 
+                                    checked
+                                > Public
+                            </label>
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="stream-privacy" 
+                                    value="followers"
+                                > Followers Only
+                            </label>
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="stream-privacy" 
+                                    value="private"
+                                > Private
+                            </label>
+                        </div>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        id="go-live-btn" 
+                        class="primary-btn"
+                    >
+                        Go Live
+                    </button>
+                </form>
+            </div>
         </div>
     </main>
 

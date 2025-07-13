@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const streamCategory = document.getElementById('stream-category').value;
         const streamDescription = document.getElementById('stream-description').value;
         const streamPrivacy = document.querySelector('input[name="stream-privacy"]:checked').value;
+        
+        // New: Add audience selection
+        const streamAudience = document.querySelector('input[name="stream-audience"]:checked').value;
 
         // Validate form
         if (!streamTitle || !streamCategory) {
@@ -49,8 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
             category: streamCategory,
             description: streamDescription,
             privacy: streamPrivacy,
+            audience: streamAudience, // New field
             streamer: window.StreamSyncAuth.getCurrentUser(),
-            startTime: new Date().toISOString()
+            startTime: new Date().toISOString(),
+            isLive: true // Add isLive flag
         };
 
         // Redirect to stream viewer with metadata
