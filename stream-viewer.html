@@ -261,7 +261,25 @@ I'll update the stream-viewer.html to include the full authentication modal, tab
             document.getElementById('stream-title').textContent = title;
             document.getElementById('stream-description').textContent = description || 'No description provided';
         });
+
+        // New code for handling stream metadata
+        const urlParams = new URLSearchParams(window.location.search);
+        const streamMetadataParam = urlParams.get('stream');
+
+        if (streamMetadataParam) {
+            try {
+                const streamMetadata = JSON.parse(decodeURIComponent(streamMetadataParam));
+
+                // Update stream info in UI
+                document.getElementById('stream-title').textContent = streamMetadata.title;
+                document.getElementById('stream-description').textContent = 
+                    `Stream by ${streamMetadata.user} - ${streamMetadata.viewers} viewers`;
+
+            } catch (error) {
+                console.error('Failed to parse stream metadata', error);
+            }
+        }
     });
-    </script>
+</script>
 </body>
 </html>

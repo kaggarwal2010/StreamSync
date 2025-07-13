@@ -24,7 +24,6 @@ function initializeUI() {
 
 
 function loadFeaturedStreams() {
-    // Use let instead of const to allow reassignment if needed
     let streamGrid = document.querySelector('.stream-grid');
 
     // If no stream grid found, create one
@@ -37,7 +36,6 @@ function loadFeaturedStreams() {
         `;
         document.body.appendChild(featuredStreamsSection);
         
-        // Re-select the stream grid after creating it
         streamGrid = document.querySelector('.stream-grid');
     }
 
@@ -46,19 +44,22 @@ function loadFeaturedStreams() {
             title: 'Gaming Stream',
             user: 'GameMaster42',
             viewers: 1245,
-            color: '#6441a5'
+            color: '#6441a5',
+            streamId: 'gaming123'
         },
         {
             title: 'Coding Stream',
             user: 'DevGuru',
             viewers: 856,
-            color: '#7289da'
+            color: '#7289da',
+            streamId: 'coding456'
         },
         {
             title: 'Art Stream',
             user: 'ArtistExtraordinaire',
             viewers: 723,
-            color: '#43b581'
+            color: '#43b581',
+            streamId: 'art789'
         }
     ];
 
@@ -72,11 +73,28 @@ function loadFeaturedStreams() {
         streamCard.style.color = 'white';
         streamCard.style.padding = '20px';
         streamCard.style.margin = '10px';
+        streamCard.style.cursor = 'pointer'; // Add pointer cursor to indicate clickability
         streamCard.innerHTML = `
             <h3>${stream.title}</h3>
             <p>Streamer: ${stream.user}</p>
             <p>Viewers: ${stream.viewers}</p>
         `;
+
+        // Add click event to navigate to stream viewer
+        streamCard.addEventListener('click', () => {
+            // Prepare stream metadata to pass to stream viewer
+            const streamMetadata = {
+                title: stream.title,
+                user: stream.user,
+                viewers: stream.viewers,
+                streamId: stream.streamId
+            };
+
+            // Encode the metadata and navigate to stream viewer
+            const encodedMetadata = encodeURIComponent(JSON.stringify(streamMetadata));
+            window.location.href = `stream-viewer.html?stream=${encodedMetadata}`;
+        });
+
         streamGrid.appendChild(streamCard);
     });
 }
