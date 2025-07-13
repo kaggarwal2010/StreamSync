@@ -51,12 +51,15 @@ I'll update the stream-viewer.html to include the full authentication modal, tab
             </div>
 
             <div class="chat-section">
-                <div class="chat-header">
-                    <h3>Stream Chat</h3>
-                    <div class="chat-options">
-                        <button class="icon-btn" id="chat-settings">⚙️</button>
+                    <div class="stream-chat-section">
+                        <div id="chat-messages" class="chat-messages"></div>
+                        <div class="chat-input">
+                            <input type="text" id="chat-input" placeholder="Send a message">
+                            <button id="send-chat-btn" class="primary-btn">Send</button>
+                        </div>
                     </div>
                 </div>
+            </div>
 
                 <div id="chat-messages" class="chat-messages">
                     <div class="chat-welcome">

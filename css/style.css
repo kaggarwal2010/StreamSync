@@ -834,3 +834,24 @@ footer {
     padding: 15px;
     color: white;
 }
+
+.chat-messages {
+    height: 400px;
+    overflow-y: auto;
+    background-color: var(--light-bg);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-message {
+    margin-bottom: 5px;
+    padding: 5px;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 4px;
+}
+.system-message {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    margin: 10px 0;
+}

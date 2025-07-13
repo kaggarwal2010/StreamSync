@@ -23,6 +23,7 @@ function initializeUI() {
 
 
 
+
 function loadFeaturedStreams() {
     let streamGrid = document.querySelector('.stream-grid');
 
@@ -78,10 +79,13 @@ function loadFeaturedStreams() {
             <h3>${stream.title}</h3>
             <p>Streamer: ${stream.user}</p>
             <p>Viewers: ${stream.viewers}</p>
+            <button class="watch-stream-btn">Watch Stream</button>
         `;
 
-        // Add click event to navigate to stream viewer
-        streamCard.addEventListener('click', () => {
+        // Add click event to the card and the button
+        const watchButton = streamCard.querySelector('.watch-stream-btn');
+        
+        const navigateToStream = () => {
             // Prepare stream metadata to pass to stream viewer
             const streamMetadata = {
                 title: stream.title,
@@ -92,7 +96,19 @@ function loadFeaturedStreams() {
 
             // Encode the metadata and navigate to stream viewer
             const encodedMetadata = encodeURIComponent(JSON.stringify(streamMetadata));
+            
+            // Log the navigation attempt
+            console.log('Navigating to stream:', encodedMetadata);
+            
+            // Use window.location to navigate
             window.location.href = `stream-viewer.html?stream=${encodedMetadata}`;
+        };
+
+        // Add click event to both the card and the button
+        streamCard.addEventListener('click', navigateToStream);
+        watchButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent card click event
+            navigateToStream();
         });
 
         streamGrid.appendChild(streamCard);
