@@ -21,6 +21,7 @@ function initializeUI() {
     }, 1500);
 }
 
+
 function loadFeaturedStreams() {
     console.log('Loading featured streams...');
     const streamGrid = document.querySelector('.stream-grid');
@@ -33,13 +34,14 @@ function loadFeaturedStreams() {
     // Clear any existing content
     streamGrid.innerHTML = '';
 
-    // Sample stream data with colors instead of images
+    // Sample stream data with colors and details
     const streams = [
         {
             title: 'Gaming Stream',
             user: 'GameMaster42',
             viewers: 1245,
             color: '#6441a5', // Twitch purple
+            category: 'Gaming',
             streamId: 'gaming123'
         },
         {
@@ -47,6 +49,7 @@ function loadFeaturedStreams() {
             user: 'DevGuru',
             viewers: 856,
             color: '#7289da', // Discord blue
+            category: 'Coding',
             streamId: 'coding456'
         },
         {
@@ -54,6 +57,7 @@ function loadFeaturedStreams() {
             user: 'ArtistExtraordinaire',
             viewers: 723,
             color: '#43b581', // Green
+            category: 'Art',
             streamId: 'art789'
         }
     ];
@@ -63,7 +67,6 @@ function loadFeaturedStreams() {
         const streamCard = document.createElement('div');
         streamCard.className = 'stream-card';
         
-        // Create a colored div with text instead of an image
         streamCard.innerHTML = `
             <div class="stream-thumbnail" style="
                 background-color: ${stream.color}; 
@@ -84,20 +87,19 @@ function loadFeaturedStreams() {
                     <span class="live-dot"></span>
                     ${stream.viewers} viewers
                 </div>
-                <button class="primary-btn watch-stream-btn">Watch Stream</button>
+                <button class="primary-btn watch-stream-btn" data-stream-id="${stream.streamId}">
+                    Watch Stream
+                </button>
             </div>
         `;
 
-        // Add click event to the button
-        streamCard.querySelector('.watch-stream-btn').addEventListener('click', () => {
-            console.log('Watch button clicked for:', stream.title);
-            
-            // Create stream metadata
+        // Add click event to watch stream button
+        const watchButton = streamCard.querySelector('.watch-stream-btn');
+        watchButton.addEventListener('click', () => {
             const streamMetadata = {
                 title: stream.title,
                 user: stream.user,
-                description: `This is the ${stream.title.toLowerCase()} by ${stream.user}`,
-                category: stream.title.split(' ')[0], // Use first word as category
+                category: stream.category,
                 viewers: stream.viewers,
                 streamId: stream.streamId
             };
@@ -112,3 +114,9 @@ function loadFeaturedStreams() {
 
     console.log('Featured streams loaded successfully');
 }
+
+// Ensure the function runs when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded');
+    loadFeaturedStreams();
+});
