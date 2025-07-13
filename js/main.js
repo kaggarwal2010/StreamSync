@@ -24,6 +24,7 @@ function initializeUI() {
 
 
 
+
 function loadFeaturedStreams() {
     let streamGrid = document.querySelector('.stream-grid');
 
@@ -46,21 +47,24 @@ function loadFeaturedStreams() {
             user: 'GameMaster42',
             viewers: 1245,
             color: '#6441a5',
-            streamId: 'gaming123'
+            streamId: 'gaming123',
+            isLive: false // Add isLive property
         },
         {
             title: 'Coding Stream',
             user: 'DevGuru',
             viewers: 856,
             color: '#7289da',
-            streamId: 'coding456'
+            streamId: 'coding456',
+            isLive: false
         },
         {
             title: 'Art Stream',
             user: 'ArtistExtraordinaire',
             viewers: 723,
             color: '#43b581',
-            streamId: 'art789'
+            streamId: 'art789',
+            isLive: false
         }
     ];
 
@@ -74,7 +78,7 @@ function loadFeaturedStreams() {
         streamCard.style.color = 'white';
         streamCard.style.padding = '20px';
         streamCard.style.margin = '10px';
-        streamCard.style.cursor = 'pointer'; // Add pointer cursor to indicate clickability
+        streamCard.style.cursor = 'pointer';
         streamCard.innerHTML = `
             <h3>${stream.title}</h3>
             <p>Streamer: ${stream.user}</p>
@@ -91,23 +95,21 @@ function loadFeaturedStreams() {
                 title: stream.title,
                 user: stream.user,
                 viewers: stream.viewers,
-                streamId: stream.streamId
+                streamId: stream.streamId,
+                isLive: stream.isLive // Pass live status
             };
 
             // Encode the metadata and navigate to stream viewer
             const encodedMetadata = encodeURIComponent(JSON.stringify(streamMetadata));
             
-            // Log the navigation attempt
-            console.log('Navigating to stream:', encodedMetadata);
-            
-            // Use window.location to navigate
+            // Navigate to stream viewer
             window.location.href = `stream-viewer.html?stream=${encodedMetadata}`;
         };
 
         // Add click event to both the card and the button
         streamCard.addEventListener('click', navigateToStream);
         watchButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent card click event
+            e.stopPropagation();
             navigateToStream();
         });
 
@@ -119,3 +121,4 @@ function loadFeaturedStreams() {
 document.addEventListener('DOMContentLoaded', function() {
     loadFeaturedStreams();
 });
+

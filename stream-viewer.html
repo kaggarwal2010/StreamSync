@@ -146,27 +146,6 @@
                 </div>
             </div>
         </div>
-
-        <form id="stream-setup-form" style="display:none;">
-            <div class="form-group">
-                <label for="stream-title">Stream Title</label>
-                <input type="text" id="stream-title" required>
-            </div>
-            <div class="form-group">
-                <label for="stream-category">Category</label>
-                <select id="stream-category" required>
-                    <option value="gaming">Gaming</option>
-                    <option value="music">Music</option>
-                    <option value="art">Art</option>
-                    <option value="talk">Talk Show</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="stream-description">Stream Description</label>
-                <textarea id="stream-description" placeholder="Tell viewers about your stream"></textarea>
-            </div>
-            <button type="submit" class="primary-btn">Go Live</button>
-        </form>
     </main>
 
     <footer>
@@ -231,56 +210,49 @@
     <script src="js/chat.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Tab switching logic
-        const tabs = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
+    // Retrieve stream metadata from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamMetadataParam = urlParams.get('stream');
 
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs
-                tabs.forEach(t => t.classList.remove('active'));
-                // Remove hidden class from all tab contents
-                tabContents.forEach(tc => tc.classList.add('hidden'));
+    if (streamMetadataParam) {
+        try {
+            const streamMetadata = JSON.parse(decodeURIComponent(streamMetadataParam));
 
-                // Add active class to clicked tab
-                tab.classList.add('active');
-                // Show corresponding tab content
-                const tabId = tab.getAttribute('data-tab');
-                document.getElementById(`${tabId}-tab`).classList.remove('hidden');
-            });
-        });
+            // Update stream info in UI
+            const titleElement = document.getElementById('stream-title');
+            const descriptionElement = document.getElementById('stream-description');
+            const streamControlsElement = document.getElementById('streamControls');
+            const streamOfflineElement = document.querySelector('.stream-offline');
+            const streamVideoElement = document.getElementById('stream-video');
 
-        // Update stream details from streaming setup
-        const streamForm = document.getElementById('stream-setup-form');
-        streamForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const title = document.getElementById('stream-title').value;
-            const description = document.getElementById('stream-description').value;
-            const category = document.getElementById('stream-category').value;
+            if (titleElement) titleElement.textContent = streamMetadata.title;
+            if (descriptionElement) descriptionElement.textContent = 
+                `Stream by ${streamMetadata.user} - ${streamMetadata.viewers} viewers`;
 
-            // Update stream details in About tab
-            document.getElementById('stream-title').textContent = title;
-            document.getElementById('stream-description').textContent = description || 'No description provided';
-        });
+            // Check if stream is live
+            if (!streamMetadata.isLive) {
+                // Hide start streaming button
+                if (streamControlsElement) streamControlsElement.style.display = 'none';
+                
+                // Show offline message
+                if (streamOfflineElement) {
+                    streamOfflineElement.innerHTML = `
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 9.5L12 14.5L7 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <p>This stream is not live yet</p>
+                    `;
+                }
 
-        // New code for handling stream metadata
-        const urlParams = new URLSearchParams(window.location.search);
-        const streamMetadataParam = urlParams.get('stream');
-
-        if (streamMetadataParam) {
-            try {
-                const streamMetadata = JSON.parse(decodeURIComponent(streamMetadataParam));
-
-                // Update stream info in UI
-                document.getElementById('stream-title').textContent = streamMetadata.title;
-                document.getElementById('stream-description').textContent = 
-                    `Stream by ${streamMetadata.user} - ${streamMetadata.viewers} viewers`;
-
-            } catch (error) {
-                console.error('Failed to parse stream metadata', error);
+                // Hide video element
+                if (streamVideoElement) streamVideoElement.style.display = 'none';
             }
+
+        } catch (error) {
+            console.error('Failed to parse stream metadata', error);
         }
-    });
+    }
+});
 </script>
 </body>
 </html>
