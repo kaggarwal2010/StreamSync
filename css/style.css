@@ -818,3 +818,19 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+.stream-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.stream-card {
+    background-color: var(--medium-bg);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.stream-info {
+    padding: 15px;
+    color: white;
+}

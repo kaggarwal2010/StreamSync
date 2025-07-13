@@ -23,59 +23,58 @@ function initializeUI() {
 
 
 function loadFeaturedStreams() {
-    console.log('Loading featured streams...');
+    // Remove the second declaration of streamGrid
     const streamGrid = document.querySelector('.stream-grid');
 
+    // If no stream grid found, create one
     if (!streamGrid) {
-        console.error('Stream grid not found');
-        return;
+        const featuredStreamsSection = document.createElement('section');
+        featuredStreamsSection.className = 'featured-streams';
+        featuredStreamsSection.innerHTML = `
+            <h2>Featured Streams</h2>
+            <div class="stream-grid"></div>
+        `;
+        document.body.appendChild(featuredStreamsSection);
+        
+        // Re-select the stream grid after creating it
+        streamGrid = document.querySelector('.stream-grid');
     }
 
-    // Clear any existing content
-    streamGrid.innerHTML = '';
-
-    // Sample stream data with colors and details
     const streams = [
         {
             title: 'Gaming Stream',
             user: 'GameMaster42',
             viewers: 1245,
-            color: '#6441a5', // Twitch purple
-            category: 'Gaming',
-            streamId: 'gaming123'
+            color: '#6441a5'
         },
         {
             title: 'Coding Stream',
             user: 'DevGuru',
             viewers: 856,
-            color: '#7289da', // Discord blue
-            category: 'Coding',
-            streamId: 'coding456'
+            color: '#7289da'
         },
         {
             title: 'Art Stream',
             user: 'ArtistExtraordinaire',
             viewers: 723,
-            color: '#43b581', // Green
-            category: 'Art',
-            streamId: 'art789'
+            color: '#43b581'
         }
     ];
 
-    // Create stream cards
+    // Clear existing content
+    streamGrid.innerHTML = '';
+
     streams.forEach(stream => {
         const streamCard = document.createElement('div');
         streamCard.className = 'stream-card';
-        
         streamCard.innerHTML = `
-            <div class="stream-thumbnail" style="
+            <div style="
                 background-color: ${stream.color}; 
                 height: 200px; 
                 display: flex; 
                 align-items: center; 
                 justify-content: center; 
-                color: white; 
-                font-weight: bold;
+                color: white;
                 font-size: 20px;
             ">
                 ${stream.title}
@@ -84,39 +83,15 @@ function loadFeaturedStreams() {
                 <h3>${stream.title}</h3>
                 <p>${stream.user}</p>
                 <div class="viewer-count">
-                    <span class="live-dot"></span>
                     ${stream.viewers} viewers
                 </div>
-                <button class="primary-btn watch-stream-btn" data-stream-id="${stream.streamId}">
-                    Watch Stream
-                </button>
             </div>
         `;
-
-        // Add click event to watch stream button
-        const watchButton = streamCard.querySelector('.watch-stream-btn');
-        watchButton.addEventListener('click', () => {
-            const streamMetadata = {
-                title: stream.title,
-                user: stream.user,
-                category: stream.category,
-                viewers: stream.viewers,
-                streamId: stream.streamId
-            };
-            
-            // Encode and pass the metadata in the URL
-            const encodedMetadata = encodeURIComponent(JSON.stringify(streamMetadata));
-            window.location.href = `stream-viewer.html?stream=${encodedMetadata}`;
-        });
-
         streamGrid.appendChild(streamCard);
     });
-
-    console.log('Featured streams loaded successfully');
 }
 
 // Ensure the function runs when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM fully loaded');
     loadFeaturedStreams();
 });
