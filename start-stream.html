@@ -43,26 +43,6 @@
                             required
                         >
                     </div>
-                    <div class="form-group">
-                        <label>Stream Audience</label>
-                        <div class="audience-options">
-                            <label>
-                                <input 
-                                    type="radio" 
-                                    name="stream-audience" 
-                                    value="all-ages" 
-                                    checked
-                                > Suitable for all ages
-                            </label>
-                            <label>
-                                <input 
-                                    type="radio" 
-                                    name="stream-audience" 
-                                    value="mature"
-                                > Mature content (18+)
-                            </label>
-                        </div>
-                    </div>
 
                     <div class="form-group">
                         <label for="stream-category">Category</label>
@@ -145,6 +125,69 @@
             </div>
         </div>
     </main>
+
+    <!-- Add this CSS directly in the HTML or in your existing CSS file -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: var(--dark-bg, #333);
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            color: white;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const startStreamingBtn = document.getElementById('start-streaming-btn');
+        const streamSetupModal = document.getElementById('stream-setup-modal');
+        const closeModalBtn = document.querySelector('.close-btn');
+
+        // Open stream setup modal
+        startStreamingBtn.addEventListener('click', () => {
+            console.log('Start Streaming button clicked');
+            streamSetupModal.style.display = 'block';
+        });
+
+        // Close modal
+        closeModalBtn.addEventListener('click', () => {
+            streamSetupModal.style.display = 'none';
+        });
+
+        // Close modal if clicked outside
+        window.addEventListener('click', (event) => {
+            if (event.target === streamSetupModal) {
+                streamSetupModal.style.display = 'none';
+            }
+        });
+    });
+    </script>
 
     <script src="js/auth.js"></script>
     <script src="js/start-stream.js"></script>
