@@ -22,9 +22,10 @@ function initializeUI() {
 }
 
 
+
 function loadFeaturedStreams() {
-    // Remove the second declaration of streamGrid
-    const streamGrid = document.querySelector('.stream-grid');
+    // Use let instead of const to allow reassignment if needed
+    let streamGrid = document.querySelector('.stream-grid');
 
     // If no stream grid found, create one
     if (!streamGrid) {
@@ -67,25 +68,14 @@ function loadFeaturedStreams() {
     streams.forEach(stream => {
         const streamCard = document.createElement('div');
         streamCard.className = 'stream-card';
+        streamCard.style.backgroundColor = stream.color;
+        streamCard.style.color = 'white';
+        streamCard.style.padding = '20px';
+        streamCard.style.margin = '10px';
         streamCard.innerHTML = `
-            <div style="
-                background-color: ${stream.color}; 
-                height: 200px; 
-                display: flex; 
-                align-items: center; 
-                justify-content: center; 
-                color: white;
-                font-size: 20px;
-            ">
-                ${stream.title}
-            </div>
-            <div class="stream-info">
-                <h3>${stream.title}</h3>
-                <p>${stream.user}</p>
-                <div class="viewer-count">
-                    ${stream.viewers} viewers
-                </div>
-            </div>
+            <h3>${stream.title}</h3>
+            <p>Streamer: ${stream.user}</p>
+            <p>Viewers: ${stream.viewers}</p>
         `;
         streamGrid.appendChild(streamCard);
     });
